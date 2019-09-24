@@ -1,0 +1,285 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>BookMarket</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel='stylesheet' href='{% static "css/bootstrap.css" %}'>
+
+
+    <!-- Custom CSS -->
+    <link rel='stylesheet' href='{% static "css/ghg.css" %}'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+<br>
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url "base" %}">BookMarket</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                	{% if not request.get_full_path == '/' %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Категории <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                          {% for category in categories %}
+                          <li><a href="{{  category.get_absolute_url }}">{{ category.name }}</a></li>
+                          {% endfor %}
+                         </ul>
+                       </li>
+                 {% endif %}
+                                        <li>
+                        <form class="navbar-form navbar-left" action='{% url "search_views" %}' method="GET">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Введите ключевые слова" name="q">
+        </div>
+        <button type="submit" class="btn btn-default">Поиск</button>
+      </form>
+                    </li>
+                 {% if not request.user.is_authenticated  %}
+                 <li>
+                 	<p class="navbar-text">Здравствуйте, гость!</p>
+                 </li>
+                 <li>
+                 	<a href='{% url "login" %}'>Войти</a>
+                 </li>
+                 <li>
+                 	<a href='{% url "registration" %}'>Регистрация</a>
+                 </li>
+                 {% else %}
+                 <li>
+                 	<p class="navbar-text">Здравствуйте, {{ request.user }}</p>
+                 </li>
+                 <li>
+                 	<a href='{% url "account" %}'>Личный кабинет</a>
+                 </li>
+                  </li>
+                 <li>
+                 	<a href='{% url "logout" %}'>Выйти</a>
+                 </li>                
+                 {% endif %}
+                 </ul>
+                 <ul class="nav navbar-nav navbar-right">
+                 	<li><a href='{% url "cart" %}'>Корзина<span class="badge" id="cart_count">{% if not request.session.total %} 0 {% else %} {{ request.session.total }} {% endif %}</span></a></li>
+                 	
+                 </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+        {% block content %}
+        <div class="row">
+
+            <div class="col-md-3">
+                <p class="lead">Категории</p>
+                <div class="list-group">
+                    {% for category in categories %}
+                    <a href="{{ category.get_absolute_url }}" class="list-group-item">{{ category.name }}</a>
+                    {% endfor %}
+                </div>
+                <div class="list-group">
+                                <form action="" method="get">
+                                    <p class="lead">Цена</p>
+                                    <a class="list-group-item" >{{ product.as_p }}
+                                    <input type="submit"  value="Поиск" /></a>
+
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+
+                <div class="row carousel-holder">
+
+                    <div class="col-md-12">
+                        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                            <!-- <ol class="carousel-indicators">
+                                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                                <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                            </ol> -->
+                            <div class="carousel-inner">
+                            	{% for product in products %}
+                            	{% if forloop.first %}
+                                <div class="item active">
+                                    <img class="slide-image" src="{{ product.image.url }}" alt="" style="padding-left: 260px; height: 484px; width: 80% ">
+                                    <br>
+                                    <p class="text-center"><a href="{{ product.get_absolute_url }}"><button class="btn btn-primary">{{ product.title }}</button></a></p>
+                                </div>
+                                {% else %}
+                                <div class="item">
+                                    <img class="slide-image" src="{{ product.image.url }}" alt="" style="padding-left: 260px; height: 484px; width: 80% ">
+                                    <br>
+                                     <p class="text-center"><a href="{{ product.get_absolute_url }}"><button class="btn btn-primary">{{ product.title }}</button></a></p>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev" style="background: transparent;">
+                                <span class="glyphicon glyphicon-chevron-left" style="color: red"></span>
+                            </a>
+                            <a class="right carousel-control" href="#carousel-example-generic" data-slide="next" style="background: transparent;">
+                                <span class="glyphicon glyphicon-chevron-right"style="color: red" ></span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+                <br>
+                <div class="row">
+                    {% for product in products %}
+                    <div class="col-sm-4 col-lg-4 col-md-4">
+                        <div class="thumbnail" style="height: 510px; position: relative;">
+                            <a href='{{ product.get_absolute_url }}'> <img src="{{ product.image.url }}" alt="" style='width: 100%; height: 370px'></a>
+                            <div class="caption">
+                            	<h5 class="text-center"><strong><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></strong></h5>
+                                <h4 class="text-center">{{ product.price }} руб.</h4>
+                                <div style="position: absolute;bottom:0; right:60px;">
+                                {% if request.user.is_authenticated %}<p class="text-right"><a href="#" class="add_to_cart" data-slug='{{ product.slug }}'><button class="btn btn-danger">Добавить в корзину</button></a> </p>
+                                {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+        </div>
+<!--        <div class="pagination">
+            <span class="step-links">
+                {% if products.has_previous %}
+                <a href="?page={{ products.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ products.number }} of {{ products.pagination.num_pages }}.
+                </span>
+                {% if products.has_next %}
+                <a href="?page={{ products.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>-->
+
+
+
+
+
+     <p class="text-center">
+      {% if products.has_previous %}
+        <a class="btn btn-outline-info mb-4" href="?page=1">Первая</a>
+        <a class="btn btn-outline-info mb-4" href="?page={{ products.previous_page_number }}">Назад</a>
+      {% endif %}
+
+      {% for num in products.paginator.page_range %}
+        {% if products.number == num %}
+
+        <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+        {% elif num > products.number|add:'-4' and num < products.number|add:'4' %}
+            <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if products.has_next %}
+        <a class="btn btn-outline-info mb-4" href="?page={{ products.next_page_number }}">Дальше</a>
+        <a class="btn btn-outline-info mb-4" href="?page={{ products.paginator.num_pages }}">Последняя</a></p>
+      {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {% endblock content %}
+    </div>
+    <!-- /.container -->
+    <div class="container">
+
+        <hr>
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Basha Misha &copy; My Website 2019</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery -->
+    <script src='{% static "js/jquery.js" %}'></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src='{% static "js/bootstrap.js" %}'></script>
+
+<script>
+	$(document).ready(function(){
+		$('.add_to_cart').on('click', function(e){
+			e.preventDefault()
+			product_slug = $(this).attr('data-slug')
+			data = {
+				product_slug: product_slug
+			}
+			$.ajax({
+				type: "GET",
+				url: '{% url "add_to_cart" %}',
+				data: data,
+				success: function(data){
+					$("#cart_count").html(data.cart_total)
+				}
+			})
+		})
+	})
+</script>
+    {% block jquery %}
+
+    {% endblock jquery %}
+</body>
+
+</html>

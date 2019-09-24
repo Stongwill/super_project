@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class='container'>
+    <div class='row'>
+        <h3>Найденные результаты {{ founded_articles.count }}</h3>
+        {% for product in founded_articles %}
+        <h4><a href='{{ product.get_absolute_url }}'>{{ product.title }}</a> </h4>
+        <p>{{ product.description |truncatewords:30 }}</p>
+        <a href='{{ product.get_absolute_url }}'> <img src='{{ product.image.url }}' style="width: 233px; height: 323px"></a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

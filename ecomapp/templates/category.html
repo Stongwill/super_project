@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="col-sm-10">
+<h2>{{ category.name }}</h2>
+<hr>
+{% for product in products_of_category %}
+<div class="col-sm-4">
+    <div class="thumbnail" style="height: 490px; position: relative;">
+<a href='{{ product.get_absolute_url }}'> <img src='{{ product.image.url }}' style="width: 233px; height: 323px"></a>
+<h5 class="text-center"><strong><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></strong></h5>
+<p class="text-center" style="font-size: 20px"><strong> Цена: {{ product.price }}руб.</strong></p>
+{% if request.user.is_authenticated %}
+    <p class="text-center"><a href='#' class='add_to_cart' data-slug='{{ product.slug }}'>
+        <button class='btn btn-danger'>Добавить в корзину</button></a></p>
+    {% else %}
+<p class='text-center'>Заказывать товар могут только авторизированные пользователи. Пожалуйста, <a href='#'>войдите</a> или <a href='#'>зарегистрируйтесь</a></p>{% endif %}
+</div>
+    </div>
+{% endfor %}
+</div>
+<script src='{% static "js/jquery.js" %}'></script>
+<script>
+$(document).ready(function(){
+	$('.add_to_cart').on('click', function(e){
+		e.preventDefault()
+		product_slug = $(this).attr('data-slug')
+		data = {
+			product_slug: product_slug
+		}
+		$.ajax({
+			type: "GET",
+			url: '{% url "add_to_cart" %}',
+			data: data,
+			success: function(data){
+				$("#cart_count").html(data.cart_total)
+			}
+		})
+	})
+})
+</script>
+{% endblock content %}
