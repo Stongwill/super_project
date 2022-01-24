@@ -1,3 +1,0 @@
-# super_project
-Книжный интернет-магазин.
-Использованные технологии: Python, Django, Bootstrap, PostgreSQL ....
