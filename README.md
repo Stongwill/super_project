@@ -1,0 +1,3 @@
+# super_project
+Интернет-магазин книжной продукции 
+Stack: Python, Django, PostgreSQL, Bootstrap ...
